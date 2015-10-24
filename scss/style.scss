@@ -110,7 +110,8 @@ div#signUpView {
 
 div#homeView {
     div#homeDiv {
-        display: flex
+        display: flex;
+        border: solid 1px black;
     }
         div#buttonDiv {
             margin-left: 20px;
@@ -121,7 +122,19 @@ div#homeView {
     }
 }
 
+div#writeView {
+    #titleInput {
+        display: block;
+        width: 100%;
+        height: 50px;
 
+    }
+    #storyInput {
+        display: block;
+        width: 100%;
+        height: 800px;
+    }
+}
 
 
 

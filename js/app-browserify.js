@@ -61,7 +61,7 @@ var LoginView = React.createClass({
 var Header = React.createClass({
 
 	render: function(){
-		return <h1>Medium</h1>
+		return <h1>The Wicked Professional</h1>
 	}
 })
 
@@ -95,7 +95,7 @@ var LoginBox = React.createClass({
 		return (
 			<div id="loginBox">
 				<input type = "text" placeholder = "username" ref = "usernameInput" />
-				<input type = "password" placeholder = "password" onKeyPress = {this._getLoginClick} />
+				<input type = "password" placeholder = "password" onKeyPress = {this._getLogin} />
 			</div>
 		)
 	}
@@ -134,62 +134,45 @@ var SignBox = React.createClass({
 })
 
 var HomeView = React.createClass({
-	componentDidMount: function(){
-		var self = this
-		var update = function(){self.forceUpdate()}
-		this.props.stories.on('sync change', update)
-	},
-
-	// componentWillUnmount: function(){
+	// componentDidMount: function(){
 	// 	var self = this
-	// 	this.props.stories
+	// 	var update = function(){self.forceUpdate()}
+	// 	this.props.stories.on('sync change', update)
 	// },
+
 
 	render: function(){
 		return(
 			<div id="homeView">
 				<HomeHeader />
-				<TestWriteStory processStory = {this.props.processStory} stories = {this.props.stories}/>
 				<StoryBox stories = {this.props.stories} />
-			</div>
-
-				
+			</div>	
 		)
 	}
 })
+
+// TestWriteStory processStory = {this.props.processStory} stories = {this.props.stories}
 			
 var HomeHeader= React.createClass({
-	render: function(){
-		return (
-			<div id="homeDiv">
-				<h5>Medium</h5>
-				<div id= "buttonDiv">
-					<button>WriteStory</button>
-					<button>Profile</button>
-					<button>Log Out</button>
-				</div>
-			</div>
-		)
-	}
-})
+	_renderWriteStoryView: function(e){
+		location.hash = 'write'
+	},
 
-var TestWriteStory = React.createClass({
-	_keyPressHandler: function(event){
-		if(event.which === 13){
-			var textBox = event.target
-			var newStory = textBox.innerHTML
-			textBox.innerHTML = ''
-			this.props.processStory(newStory)
-		}
+	_renderLogOut : function(e){
+		location.hash = 'logout'
 	},
 
 	render: function(){
-		return(
-			<div
-				onKeyPress={this._keyPressHandler} contentEditable = "true" id="testWriteStory"
-				>
+		return (
+			<div id="homeDiv">
+				<h5>The Wicked Professional</h5>
+				<div id= "buttonDiv">
+					<button onClick={this._renderWriteStoryView}>WriteStory</button>
+					<button>Profile</button>
+					<button onClick={this._renderLogOut}>Log Out</button>
+				</div>
 			</div>
-			)
+		)
 	}
 })
 
@@ -224,13 +207,34 @@ var Story = React.createClass({
 	}
 })
 
-//need to add click event on button to go to sign up page; defer sign up and login pages!
 
+var WriteView = React.createClass({
+	_keyPressHandler: function(event){
+		if(event.which === 13){
+			var textBox = event.target
+			var newStory = textBox.innerHTML
+			textBox.innerHTML = ''
+			this.props.processStory(newStory)
+		}
+	},
+
+	render: function(){
+		return(
+			<div id="writeView">
+				<Header />
+				<input type = "text" placeholder = "Title" ref = "titleInput" id="titleInput" />
+				<input type = "text" placeholder = "Tell Your Story" ref = "storyInput" id="storyInput" />
+			</div>
+		)
+	}
+})
 
 //----------------ROUTER-------------
 
 var MediumRouter = Backbone.Router.extend({
 	routes:{
+		'logout':'showlogOut',
+		'write': 'showBlog',
 		'home': 'showHome',
 		'signup': 'showSignUp',
 		'login': 'showLogin'
@@ -238,15 +242,15 @@ var MediumRouter = Backbone.Router.extend({
 	},
 
 	processLogin: function(){
-		Parse.User.logIn(username,password).then(
+		Parse.User.logIn().then(
 			function(){
 				alert("Thanks for logging in " + username)
 				location.hash = "home"
 			},
 			function(){
 				alert('Password is not valid. If you do not have an account, please sign up.')
-			})
-	},
+			}
+	)},
 
 
 	processSignup: function(username,password){
@@ -301,6 +305,19 @@ var MediumRouter = Backbone.Router.extend({
 		})
 		React.render(
 			<HomeView processStory = {this.processStory.bind(this)} stories={this.sc}/>, document.querySelector("#container"))
+	},
+
+	showBlog: function(){
+		React.render(<WriteView sendInfo = {this.processStory.bind(this)} stories={this.sc} />, document.querySelector("#container"))
+	},
+
+	showlogOut: function(){
+		Parse.User.logOut().then(
+			function(){
+				location.hash = "login"
+			}
+		)
+		this.pc.reset()
 	},
 
 
