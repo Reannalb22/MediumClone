@@ -145,7 +145,7 @@ var HomeView = React.createClass({
 		return(
 			<div id="homeView">
 				<HomeHeader />
-				<StoryBox stories = {this.props.stories} />
+				<Newsfeed stories = {this.props.stories} />
 			</div>	
 		)
 	}
@@ -176,9 +176,9 @@ var HomeHeader= React.createClass({
 	}
 })
 
-var StoryBox = React.createClass({
+var Newsfeed = React.createClass({
 	_renderStory: function(storyObj){
-		return <Story key={storyObj.id} story={storyObj} />
+		return <News key={storyObj.id} story={storyObj} />
 	},
 
 	render: function(){
@@ -195,7 +195,7 @@ var StoryBox = React.createClass({
 	}
 })
 
-var Story = React.createClass({
+var News = React.createClass({
 	render: function(){
 		// window.storyy = this.props.story 
 		return(
@@ -209,13 +209,17 @@ var Story = React.createClass({
 
 
 var WriteView = React.createClass({
-	_keyPressHandler: function(event){
-		if(event.which === 13){
-			var textBox = event.target
-			var newStory = textBox.innerHTML
-			textBox.innerHTML = ''
-			this.props.processStory(newStory)
-		}
+	// _keyPressHandler: function(event){
+	// 	if(event.which === 13){
+	// 		var textBox = event.target
+	// 		var newStory = textBox.innerHTML
+	// 		textBox.innerHTML = ''
+	// 		this.props.processStory(newStory)
+	// 	}
+	// },
+
+	_clicktoSubmit: function(e){
+		location.hash = 'home'
 	},
 
 	render: function(){
@@ -224,6 +228,7 @@ var WriteView = React.createClass({
 				<Header />
 				<input type = "text" placeholder = "Title" ref = "titleInput" id="titleInput" />
 				<input type = "text" placeholder = "Tell Your Story" ref = "storyInput" id="storyInput" />
+				<button onClick = {this._clicktoSubmit}>Save</button>
 			</div>
 		)
 	}
